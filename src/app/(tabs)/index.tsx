@@ -1,11 +1,16 @@
+import { dummyPosts } from '@/dummyData';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import PostListItem from '@/components/PostListItem';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Feed</Text>
-    </View>
+    <FlatList
+      data={dummyPosts}
+      renderItem={({item}) => (
+        <PostListItem post={item} />
+      )}
+      />
   );
 }
 
