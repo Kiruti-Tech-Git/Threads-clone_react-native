@@ -15,27 +15,30 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  //   const handleLogin = async () => {
-  //     if (!email || !password) {
-  //       Alert.alert('Please enter an email and password');
-  //       return;
-  //     }
-
-  //     try {
-  //       setIsLoading(true);
-
-  //       const { error } = await supabase.auth.signInWithPassword({
-  //         email,
-  //         password,
-  //       });
-  //       if (error) Alert.alert(error.message);
-  //     } catch (error) {
-  //       console.error('Login error:', error);
-  //       Alert.alert('Login error:', error.message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      Alert.alert("Please enter an email and password");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) Alert.alert(error.message);
+      if (!session)
+        Alert.alert("Please check your inbox for email verification!");
+    } catch (error) {
+      console.error("Login error:", error);
+      // TODO: handle error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <View className="flex-1 items-center justify-center bg-neutral-900 px-6">
@@ -56,7 +59,7 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
-              //   onChangeText={setEmail}
+              onChangeText={setEmail}
             />
           </View>
 
@@ -70,14 +73,14 @@ export default function LoginScreen() {
               placeholderTextColor="#6B7280"
               secureTextEntry
               value={password}
-              //   onChangeText={setPassword}
+              onChangeText={setPassword}
             />
           </View>
 
           <TouchableOpacity
             className="w-full bg-white py-3 rounded-lg mt-6"
             activeOpacity={0.8}
-            // onPress={handleLogin}
+            onPress={handleSignUp}
             disabled={isLoading}
           >
             <Text className="text-black text-center font-semibold">

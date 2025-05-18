@@ -6,7 +6,7 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -15,27 +15,47 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  //   const handleLogin = async () => {
-  //     if (!email || !password) {
-  //       Alert.alert('Please enter an email and password');
-  //       return;
-  //     }
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Please enter an email and password");
+      return;
+    }
 
-  //     try {
-  //       setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-  //       const { error } = await supabase.auth.signInWithPassword({
-  //         email,
-  //         password,
-  //       });
-  //       if (error) Alert.alert(error.message);
-  //     } catch (error) {
-  //       console.error('Login error:', error);
-  //       Alert.alert('Login error:', error.message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+      //   console.log("Login response:", { error });
+
+      if (error) {
+        Alert.alert(error.message);
+        return;
+      }
+
+      // Confirm session is active
+      const sessionResult = await supabase.auth.getSession();
+      //   console.log("Current session:", sessionResult.data.session);
+
+      // Navigate to home screen or wherever
+      // For example, if using expo-router:
+      // import { router } from "expo-router";
+      router.replace("/home");
+
+      Alert.alert("Login successful");
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error instanceof Error) {
+        Alert.alert("Login error:", error.message);
+      } else {
+        Alert.alert("Login error:", "An unknown error occurred.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <View className="flex-1 items-center justify-center bg-neutral-900 px-6">
@@ -56,7 +76,7 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
-              //   onChangeText={setEmail}
+              onChangeText={setEmail}
             />
           </View>
 
@@ -70,14 +90,14 @@ export default function LoginScreen() {
               placeholderTextColor="#6B7280"
               secureTextEntry
               value={password}
-              //   onChangeText={setPassword}
+              onChangeText={setPassword}
             />
           </View>
 
           <TouchableOpacity
             className="w-full bg-white py-3 rounded-lg mt-6"
             activeOpacity={0.8}
-            // onPress={handleLogin}
+            onPress={handleLogin}
             disabled={isLoading}
           >
             <Text className="text-black text-center font-semibold">
