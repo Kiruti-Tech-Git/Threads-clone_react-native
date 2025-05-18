@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 
 
 export default function TabsLayout() {
-    console.log('TabsLayout rendered');
+    // console.log('TabsLayout rendered');
     return (
       <Tabs
         screenOptions={{          
