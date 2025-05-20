@@ -10,7 +10,7 @@ import {
 import PostListItem from "@/components/PostListItem";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Post } from "@/types";
+// import { Post } from "@/types";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 
