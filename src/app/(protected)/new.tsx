@@ -51,7 +51,9 @@ export default function NewPostScreen() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80} // Adjust for Android
         style={{ flex: 1 }}
       >
-        <Text className="text-white text-lg font-bold">User name</Text>
+        <Text className="text-white text-lg font-bold">
+          {user ? user.email : ""}
+        </Text>
 
         <TextInput
           value={text}

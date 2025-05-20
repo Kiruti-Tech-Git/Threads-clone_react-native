@@ -1,9 +1,9 @@
 export type User = {
   id: string;
-  username: string;
-  name: string;
-  avatar_url: string;
-  bio: string;
+  username: string | null;
+  name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
 };
 
 export type Post = {
