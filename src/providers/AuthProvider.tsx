@@ -61,8 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       <>
         <View className="flex-1 items-center justify-between">
           <ActivityIndicator size="large" color="#0000ff" />
-        </View>{" "}
-        // or a loading spinner
+        </View>
       </>
     );
   }
