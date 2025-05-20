@@ -30,14 +30,8 @@ export default function HomeScreen() {
     queryFn: fetchPosts,
   });
 
-  // const [posts, setPosts] = useState<Post[]>([]);
+  // console.log(JSON.stringify(data, null, 2));
 
-  // useEffect(() => {
-
-  //   fetchPosts();
-  // }, []);
-
-  console.log(JSON.stringify(data, null, 2));
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }

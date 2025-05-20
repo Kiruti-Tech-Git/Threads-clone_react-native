@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   View,
@@ -8,31 +10,46 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const createPost = async (content: string, user_id: string) => {
+  const { data } = await supabase
+    .from("posts")
+    .insert({
+      content,
+      user_id,
+    })
+    .select("*")
+    .throwOnError();
+  return data;
+};
+
 export default function NewPostScreen() {
+  const queryClient = useQueryClient();
+
   const [text, setText] = useState("");
   const { user } = useAuth();
 
-  const onSubmit = async () => {
-    if (!text || !user) return;
-    const { data, error } = await supabase.from("posts").insert({
-      content: text,
-      user_id: user.id,
-    });
-    if (error) {
-      console.error("Error inserting post: ", error);
-    }
-    setText("");
-  };
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: () => createPost(text, user!.id),
+    onSuccess: (data) => {
+      setText("");
+      router.back();
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: (error) => {
+      Alert.alert("Error creating post: ", error.message);
+    },
+  });
 
   return (
     <SafeAreaView edges={["bottom"]} className="p-4 flex-1">
       <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 140 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : "padding"} // Use "padding" for both
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80} // Adjust for Android
+        style={{ flex: 1 }}
       >
         <Text className="text-white text-lg font-bold">User name</Text>
 
@@ -45,11 +62,17 @@ export default function NewPostScreen() {
           multiline
           numberOfLines={4}
         />
+        {error && (
+          <Text className="text-red-500 text-sm mt-2">{error.message}</Text>
+        )}
 
         <View className="mt-auto">
           <Pressable
-            onPress={onSubmit}
-            className="bg-white p-3 px-6 self-end rounded-full mt-4"
+            onPress={() => mutate()}
+            className={`${
+              isPending ? "bg-white/50" : "bg-white"
+            } p-3 px-6 self-end rounded-full mt-4`}
+            disabled={isPending}
           >
             <Text className="text-black font-bold">Post</Text>
           </Pressable>
